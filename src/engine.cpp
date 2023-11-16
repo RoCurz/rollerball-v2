@@ -11,9 +11,11 @@ int duration;
 U16 last_move;
 
 int evaluation(const Board& board){
-    std::string board_string = board_to_str(board.data.board_0);
-    int n = board_string.size();
-    int w_p = 0, w_r = 0, w_b = 0, b_p = 0, b_r = 0, b_b = 0;
+    // std::string board_string = board_to_str(board.data.board_0);
+    auto* b_data = &board.data;
+
+    // int n = board_string.size();
+    int w_p = 0, w_r = 0, w_b = 0, w_k = 0 , b_k = 0 ,b_p = 0, b_r = 0, b_b = 0;
     // std::vector<U8> pieces = {board.data.b_rook_ws,board.data.b_rook_bs,board.data.b_bishop,board.data.b_pawn_bs,board.data.b_rook_ws,
     //                         board.data.w_rook_ws,board.data.w_rook_bs,board.data.w_bishop,board.data.w_pawn_bs,board.data.w_rook_ws};
 
@@ -52,30 +54,27 @@ int evaluation(const Board& board){
     //         }
     //     }  
     // }
-    for (int i=0;i<n;i++){
-        switch (board_string[i]) {
-            case 'P':
-                w_p+=1;
-                break;
-            case 'R':
-                w_r+=1;
-                break;
-            case 'B':
-                w_b+=1;
-                break;
-            case 'p':
-                b_p+=1;
-                break;
-            case 'r':
-                b_r+=1;
-                break;
-            case 'b':
-                b_b+=1;
-                break;
-            default:
-                break;
-        }
-    }
+    if (b_data->b_rook_1   != DEAD) b_r+=1;
+    if (b_data->b_rook_2   != DEAD) b_r+=1;
+    // if (b_data->b_king     != DEAD) b_k+=1;
+    if (b_data->b_bishop   != DEAD) b_b+=1;
+    if (b_data->b_knight_1 != DEAD) b_k+=1;
+    if (b_data->b_knight_2 != DEAD) b_k+=1;
+    if (b_data->b_pawn_1   != DEAD) b_p+=1;
+    if (b_data->b_pawn_2   != DEAD) b_p+=1;
+    if (b_data->b_pawn_3   != DEAD) b_p+=1;
+    if (b_data->b_pawn_4   != DEAD) b_p+=1;
+
+    if (b_data->w_rook_1   != DEAD) w_r+=1;
+    if (b_data->w_rook_2   != DEAD) w_r+=1;;
+    // if (b_data->w_king     != DEAD) w_k+=1;
+    if (b_data->w_bishop   != DEAD) w_b+=1;
+    if (b_data->w_knight_1 != DEAD) w_k+=1;
+    if (b_data->w_knight_2 != DEAD) w_k+=1;
+    if (b_data->w_pawn_1   != DEAD) w_p+=1; 
+    if (b_data->w_pawn_2   != DEAD) w_p+=1;
+    if (b_data->w_pawn_3   != DEAD) w_p+=1;
+    if (b_data->w_pawn_4   != DEAD) w_p+=1;
     int ans;
     ans = 1000*(w_r-b_r)+600*(w_b-b_b)+100*(w_p-b_p);
     if (board.data.player_to_play==(PlayerColor)BLACK){
@@ -125,7 +124,7 @@ int evaluation(const Board& board){
     return ans;
 }
 
-int minmax(const Board& board, int depth, int alpha, int beta, std::atomic<bool>& search) 
+int minmax(const Board& board, int depth, int alpha, int beta, std::atomic<bool> t) 
     {
         if (depth == 0 || !search) {
             int eval = evaluation(board);
@@ -143,7 +142,9 @@ int minmax(const Board& board, int depth, int alpha, int beta, std::atomic<bool>
                 maxEval = std::max(ans, maxEval);
                 alpha = std::max(alpha, ans);
                 if (beta <= alpha) {
-                    break;
+                    break; }
+      |  ^
+
                 }
             }
             return maxEval;
